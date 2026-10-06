@@ -1,0 +1,180 @@
+/* Adapted from "Book Gallery (Click image)" by Daniel Muñoz, MIT — see LICENSE-template.txt */
+@property --page-rotate {
+	syntax: "<angle>";
+	inherits: true;
+	initial-value: 0deg;
+}
+@property --spine-shift {
+	syntax: "<length>";
+	inherits: true;
+	initial-value: 0px;
+}
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+:root {
+	/* Page size; the open book is twice this wide, so it shrinks on phones */
+	--page-w: 200px;
+	--page-h: 300px;
+}
+@media (max-width: 480px) {
+	:root {
+		--page-w: 40vw;
+		--page-h: 60vw;
+	}
+}
+body {
+	background-color: #e0e0e0;
+	font-family: "Outfit", system-ui, -apple-system, sans-serif;
+	color: #111;
+}
+.scene {
+	width: 100%;
+	height: 100svh;
+	perspective: 1000px;
+	transform-style: preserve-3d;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden;
+	position: relative;
+
+	background-image: url("https://images.unsplash.com/photo-1763152496539-302ef51ef66f?q=80&w=1200&auto=format&fit=crop");
+	background-size: cover;
+	background-position: center;
+	background-blend-mode: overlay;
+}
+
+.bg-typography {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 100%;
+	text-align: center;
+	font-size: clamp(4rem, 15vw, 15rem);
+	font-weight: 800;
+	line-height: 0.8;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 5vw;
+	pointer-events: none;
+	z-index: 0;
+	mix-blend-mode: exclusion;
+	color: white;
+}
+
+/* On phones, stack the name above and below the book */
+@media (max-width: 480px) {
+	.bg-typography {
+		flex-direction: column;
+		justify-content: space-between;
+		height: calc(var(--page-h) + 2 * 1.1em);
+		font-size: 22vw;
+	}
+}
+
+.bg-typography span {
+	display: block;
+}
+
+.galeria-book-3d {
+	position: relative;
+	width: var(--page-w);
+	height: var(--page-h);
+	perspective: 1000px;
+	transform-style: preserve-3d;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 10;
+
+	--spine-shift: 0px;
+
+	transform: translateX(var(--spine-shift));
+	transition: --spine-shift 0.5s ease;
+}
+
+.galeria-book-3d.book-open {
+	--spine-shift: calc(var(--page-w) / 2);
+}
+
+.galeria-book-3d__item {
+	position: absolute;
+	width: var(--page-w);
+	height: var(--page-h);
+	perspective: 1000px;
+	transform-style: preserve-3d;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transform-origin: left center;
+	--page-rotate: 0deg;
+	transform: rotateY(var(--page-rotate));
+	transition: --page-rotate 0.5s ease-in-out, z-index 0s;
+	transition-delay: calc((4 - var(--i)) * 0.1s),
+		calc((4 - var(--i)) * 0.1s + 0.25s);
+	box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+	cursor: pointer;
+	z-index: calc(10 - var(--i));
+	-webkit-tap-highlight-color: transparent;
+}
+
+.galeria-book-3d__item.is-open {
+	--page-rotate: -180deg;
+	transition-delay: 0s, 0s;
+	z-index: calc(20 + var(--i));
+}
+
+.galeria-book-3d__item img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: #f4f4f4;
+	backface-visibility: hidden;
+	-webkit-backface-visibility: hidden;
+}
+
+.galeria-book-3d__item img:nth-child(2) {
+	transform: rotateY(180deg) translateZ(1px);
+	z-index: 1;
+}
+
+.about {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: max(1.5rem, env(safe-area-inset-bottom));
+	z-index: 30;
+	text-align: center;
+	padding: 0 16px;
+	color: #fff;
+	mix-blend-mode: exclusion;
+}
+
+.bio {
+	font-size: 1rem;
+	font-weight: 400;
+	margin-bottom: 0.5rem;
+}
+
+.links {
+	display: flex;
+	justify-content: center;
+	gap: 1.25rem;
+	flex-wrap: wrap;
+}
+
+.links a {
+	color: inherit;
+	font-size: 0.9rem;
+	text-decoration: none;
+	border-bottom: 1px solid currentColor;
+	padding-bottom: 1px;
+}
