@@ -26,3 +26,8 @@ document.addEventListener("click", () => {
 	});
 	updateContainerState();
 });
+
+// Assemble the email address in the browser so it never appears in the page source
+document.querySelectorAll(".js-email").forEach((link) => {
+	link.href = "mailto:" + link.dataset.u + "@" + link.dataset.d;
+});
